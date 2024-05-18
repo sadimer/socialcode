@@ -102,7 +102,7 @@ def parsing(path):
                 payer['НазначениеПлатежа'] = string[1]
 
             if ('Сумма' in string) and (skip == 0):
-                payer['Сумма'] = string[1]
+                payer['Сумма'] = (string[1].split("."))[0]
 
             if 'КонецДокумента' in string[0]:
                 if (skip == 0):
