@@ -119,6 +119,7 @@ def parsing(path):
             if (span.type == PER):
                 span.normalize(morph_vocab)
                 names_patients.extend(re.split(" .+? ", span.normal))
+        payer["Пациент"] = names_patients
 
     for payer in payer_list:
         cond = Conditions(payer)
