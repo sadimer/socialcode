@@ -100,6 +100,12 @@ def parsing(path):
 
             if ('НазначениеПлатежа' in string) and (skip == 0):
                 payer['НазначениеПлатежа'] = string[1]
+                mail = re.search(r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.\w+', string[1])
+                if mail:
+                    payer['Почта'] = mail.group(0)
+                telephone = re.search(r'((\+7|7|8)+([0-9]){10})', string[1])
+                if telephone:
+                    payer['Телефон'] = telephone.group()
 
             if ('Сумма' in string) and (skip == 0):
                 payer['Сумма'] = (string[1].split("."))[0]
