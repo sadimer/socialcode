@@ -1,0 +1,5 @@
+uvicorn
+natasha
+fastapi
+dotenv
+pymorphy2
