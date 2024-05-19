@@ -2,3 +2,4 @@ uvicorn
 natasha
 fastapi
 pymorphy2
+pydantic-settings
