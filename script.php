@@ -64,6 +64,7 @@ function parseJsonFromUrl($url) {
 			$name = $dataObject['ФИО'];
 		}
 
+
         $patientID = null;
         $b24ID = null;
         foreach ($dataObject['Пациент'] as $patient) {
@@ -71,9 +72,10 @@ function parseJsonFromUrl($url) {
 				"IBLOCK_ID" => 56,
 				"%NAME" => $patient
 			];
-            $patientRes = CIBlockElement::GetList([], $patientFilter, false, false, ["ID", "PROPERTY_B24_ID"]);
+            $patientRes = CIBlockElement::GetList([], $patientFilter, false, false, ["ID", "PROPERTY_B24_ID", "NAME"]);
             if ($patientObj = $patientRes->Fetch()) {
                 $patientID = $patientObj['ID'];
+                $patientName = $patientObj['NAME'];
                 $b24ID = $patientObj['PROPERTY_B24_ID_VALUE'];
                 break;
             }
@@ -85,15 +87,36 @@ function parseJsonFromUrl($url) {
 
         if ($patientID !== null) {
             $fundraiserFilter = ["IBLOCK_ID" => 57, "ACTIVE" => "Y", "PROPERTY_PATIENT" => $patientID];
-            $fundraiserRes = CIBlockElement::GetList([], $fundraiserFilter, false, false, ["ID", "NAME", "PROPERTY_TARGET", "PROPERTY_B24_ID", "DETAIL_PAGE_URL", "CODE"]);
+            $fundraiserRes = CIBlockElement::GetList([], $fundraiserFilter, false, false, ["ID", "NAME", "PROPERTY_194", "PROPERTY_B24_ID", "DETAIL_PAGE_URL", "CODE"]);
             if ($fundraiserObj = $fundraiserRes->Fetch()) {
-                $PROP[10] = 'FBL' . mb_substr($fundraiserObj['PROPERTY_B24_ID_VALUE'], -4);
+                $PROP[10] = $fundraiserObj['PROPERTY_194_VALUE'];
+                $PROP[9] = $patientName;
                 $PROP[236] = $fundraiserObj['PROPERTY_B24_ID_VALUE'];
                 $PROP[234] = $fundraiserObj['NAME'];
                 $PROP[235] = $siteUrl . str_replace("#ELEMENT_CODE#", $fundraiserObj['CODE'], $fundraiserObj['DETAIL_PAGE_URL']);;
                 $PROP[238] = $b24ID;
             }
         }
+
+        if ($dataObject['Цель'] !== null) {
+			$fundraiserFilter = ["IBLOCK_ID" => 57, "ACTIVE" => "Y", "PROPERTY_194" => $dataObject['Цель']];
+            $fundraiserRes = CIBlockElement::GetList([], $fundraiserFilter, false, false, ["ID", "NAME", "PROPERTY_PATIENT", "PROPERTY_194", "PROPERTY_B24_ID", "DETAIL_PAGE_URL", "CODE"]);
+            if ($fundraiserObj = $fundraiserRes->Fetch()) {
+                $PROP[10] = $fundraiserObj['PROPERTY_194_VALUE'];
+                $PROP[236] = $fundraiserObj['PROPERTY_B24_ID_VALUE'];
+                $PROP[234] = $fundraiserObj['NAME'];
+                $PROP[235] = $siteUrl . str_replace("#ELEMENT_CODE#", $fundraiserObj['CODE'], $fundraiserObj['DETAIL_PAGE_URL']);
+                $patientFilter = [
+					"IBLOCK_ID" => 56,
+					"PATIENT_VALUE" => $fundraiserObj["PROPERTY_PATIENT_VALUE"]
+				];
+				$patientRes = CIBlockElement::GetList([], $patientFilter, false, false, ["ID", "PROPERTY_B24_ID", "NAME"]);
+				if ($patientObj = $patientRes->Fetch()) {
+					$PROP[238] = $patientObj['PROPERTY_B24_ID_VALUE'];
+					$PROP[9] = $patientObj['NAME'];
+				}
+            }
+		}
 
         $filter = [
             "IBLOCK_ID" => 4,
@@ -103,6 +126,7 @@ function parseJsonFromUrl($url) {
             "PROPERTY_238" => $PROP[238],
             "PROPERTY_236" => $PROP[236],
             "PROPERTY_10" => $PROP[10],
+            "PROPERTY_9" => $PROP[9],
             "PROPERTY_4" => $PROP[4],
             "NAME" => $name,
         ];
@@ -113,7 +137,7 @@ function parseJsonFromUrl($url) {
         }
 
         $arLoadProductArray = Array(
-            "MODIFIED_BY"    => 7, // $USER->GetID(),
+            "MODIFIED_BY"    => 7, // $USER->GetID(), // Работает только в крон джобе
             "IBLOCK_SECTION_ID" => false,
             "IBLOCK_ID"      => 4,
             "PROPERTY_VALUES"=> $PROP,
