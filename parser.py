@@ -96,7 +96,7 @@ def parsing(path):
                 payer["ПлательщикБанк1"] = string[1]
 
             if ("НазначениеПлатежа" in string) and (skip == 0):
-                payer["НазначениеПлатежа"] = string[1]
+                payer["НазначениеПлатежа"] = string[1].replace("//", " ")
                 mail = re.search(
                     r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.\w+", string[1]
                 )
