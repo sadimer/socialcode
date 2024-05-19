@@ -31,7 +31,7 @@ cd ./socialecode
 2. Запуск в стандартном режиме:
 
 ```bash
-uvicorn main:app
+uvicorn main:app --host 0.0.0.0
 ```
 
 ### Добавление данных для обработки 
