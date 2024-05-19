@@ -5,7 +5,9 @@ CModule::IncludeModule('iblock');
 use Bitrix\Main\Web\HttpClient;
 use Bitrix\Iblock\PropertyEnumerationTable;
 
-function parseJsonFromUrl($url) {
+function parseJsonFromUrl() {
+	$url = 'http://83.149.198.174:8000';
+	
 	$httpClient = new HttpClient();
 	$response = $httpClient->get($url);
 
@@ -19,7 +21,7 @@ function parseJsonFromUrl($url) {
         throw new Exception("JSON decode error: " . json_last_error_msg());
     }
 
-    foreach ($dataArray as $dataObject) {
+    foreach ($dataArray as $dataObject) {        
         $el = new CIBlockElement;
         $PROP = array();
         if ($dataObject['Телефон'] !== null) {
@@ -27,6 +29,9 @@ function parseJsonFromUrl($url) {
         }
         if ($dataObject['Почта'] !== null) {
             $PROP[241] = $dataObject['Почта']; // CODE
+        }
+        if ($dataObject['Дата'] !== null) {
+            $PROP[242] = $dataObject['Дата'];
         }
         if ($dataObject['Сумма'] !== null) {
             $PROP[4] = $dataObject['Сумма'];
@@ -63,13 +68,13 @@ function parseJsonFromUrl($url) {
         } else {
 			$name = $dataObject['ФИО'];
 		}
-
+		
 
         $patientID = null;
         $b24ID = null;
         foreach ($dataObject['Пациент'] as $patient) {
             $patientFilter = [
-				"IBLOCK_ID" => 56,
+				"IBLOCK_ID" => 56, 
 				"%NAME" => $patient
 			];
             $patientRes = CIBlockElement::GetList([], $patientFilter, false, false, ["ID", "PROPERTY_B24_ID", "NAME"]);
@@ -80,7 +85,7 @@ function parseJsonFromUrl($url) {
                 break;
             }
         }
-
+        
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
 		$host = $_SERVER['HTTP_HOST'];
 		$siteUrl = $protocol . $host;
@@ -97,7 +102,7 @@ function parseJsonFromUrl($url) {
                 $PROP[238] = $b24ID;
             }
         }
-
+        
         if ($dataObject['Цель'] !== null) {
 			$fundraiserFilter = ["IBLOCK_ID" => 57, "ACTIVE" => "Y", "PROPERTY_194" => $dataObject['Цель']];
             $fundraiserRes = CIBlockElement::GetList([], $fundraiserFilter, false, false, ["ID", "NAME", "PROPERTY_PATIENT", "PROPERTY_194", "PROPERTY_B24_ID", "DETAIL_PAGE_URL", "CODE"]);
@@ -107,7 +112,7 @@ function parseJsonFromUrl($url) {
                 $PROP[234] = $fundraiserObj['NAME'];
                 $PROP[235] = $siteUrl . str_replace("#ELEMENT_CODE#", $fundraiserObj['CODE'], $fundraiserObj['DETAIL_PAGE_URL']);
                 $patientFilter = [
-					"IBLOCK_ID" => 56,
+					"IBLOCK_ID" => 56, 
 					"PATIENT_VALUE" => $fundraiserObj["PROPERTY_PATIENT_VALUE"]
 				];
 				$patientRes = CIBlockElement::GetList([], $patientFilter, false, false, ["ID", "PROPERTY_B24_ID", "NAME"]);
@@ -117,10 +122,11 @@ function parseJsonFromUrl($url) {
 				}
             }
 		}
-
+        
         $filter = [
             "IBLOCK_ID" => 4,
             "PROPERTY_238" => $PROP[238],
+            "PROPERTY_242" => $PROP[242],
             "PROPERTY_235" => $PROP[235],
             "PROPERTY_234" => $PROP[234],
             "PROPERTY_238" => $PROP[238],
@@ -150,6 +156,7 @@ function parseJsonFromUrl($url) {
             echo "Error: ".$el->LAST_ERROR;
         }
     }
+    return "parseJsonFromUrl();";
 }
 
 ?>
