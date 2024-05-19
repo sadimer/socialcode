@@ -63,9 +63,18 @@ curl -X 'POST' \
 
 ### Запуск крон-джобы в битрикс24
 
-1. Добавить импорта нашего модуля в файл local/php_interface/init.php
-```require_once __DIR__ . '/include/hack.php';```
-2. Создать файл local/php_interface/include/hack.php скопировав содержимое agent/agent.php, предварительно указав в нем в переменной $url адрес файлового сервера на котором запущен FastAPI сервер парсера из этого репозитория
-3. В поиске админ панели битрикс найти "Агенты"
-4. Нажать кнопку ![Кнопка](images/Screen%20Capture_select-area_20240519113114.png)
-5. Заполнить форму создания агента ![Агент](images/Screen%20Capture_select-area_20240519113828.png)
+1. Добавить импорт нашего модуля в файл local/php_interface/init.php;
+```php
+require_once __DIR__ . '/include/hack.php';
+```
+
+2. Создать файл local/php_interface/include/hack.php, скопировав содержимое agent/agent.php. Предварительно необходимо указать в переменной $url адрес файлового сервера, на котором запущен FastAPI-сервер парсера из этого репозитория;
+3. В поиске админ панели битрикс найти "Агенты";
+   
+4. Нажать на кнопку;
+
+![Кнопка](images/Screen%20Capture_select-area_20240519113114.png)
+   
+5. Заполнить форму создания агента.
+
+![Агент](images/Screen%20Capture_select-area_20240519113828.png)
