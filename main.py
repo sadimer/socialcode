@@ -11,5 +11,5 @@ app = FastAPI()
 
 @app.get("/")
 async def root():
-    path_list = settings.path
+    path_list = settings.path_dir.split(",")
     return parsing(path_list)

@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    path: str
+    path_dir: str
 
     class Config:
         env_file = (".env.local", ".env")
