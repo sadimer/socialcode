@@ -34,7 +34,7 @@ def extract_and_normalize_names(text):
 
 
 def check_txt(element):
-    if ".txt" in element:
+    if element.endswith(".txt"):
         return True
     return False
 
@@ -96,7 +96,10 @@ def parsing(path):
                 payer["ПлательщикБанк1"] = string[1]
 
             if ("Дата" in string) and (skip == 0):
-                date = re.search(r"(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\d\d", string[1])
+                date = re.search(
+                    r"(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\d\d",
+                    string[1],
+                )
                 if date:
                     payer["Дата"] = date.group()
             if ("НазначениеПлатежа" in string) and (skip == 0):
