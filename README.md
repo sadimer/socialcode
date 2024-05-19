@@ -9,7 +9,7 @@ git clone https://github.com/sadimer/socialcode.git
 ```
 
 ```bash
-cd ./socialecode
+cd ./socialcode
 ```
 
 1. Запуск в Docker-контейнере:
